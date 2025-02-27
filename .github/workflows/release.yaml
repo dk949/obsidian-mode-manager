@@ -1,0 +1,46 @@
+name: Create Release
+
+on:
+  push:
+    tags: ["*"]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required to get tag message
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Get tag message
+        id: tag-message
+        run: |
+          TAG_NAME=${{ github.ref_name }}
+          TAG_MESSAGE=$(git tag -l --format='%(contents)' "$TAG_NAME")
+          # Escape special characters for JSON
+          TAG_MESSAGE="${TAG_MESSAGE//'%'/'%25'}"
+          TAG_MESSAGE="${TAG_MESSAGE//$'\n'/'%0A'}"
+          TAG_MESSAGE="${TAG_MESSAGE//$'\r'/'%0D'}"
+          echo "message=$TAG_MESSAGE" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: ${{ steps.tag-message.outputs.message }}
+          files: |
+            main.js
+            manifest.json
