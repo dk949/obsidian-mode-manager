@@ -1,4 +1,4 @@
-import { App, Editor, FileView, ItemView, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile, View } from "obsidian";
+import { App, FileView, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TFile, View } from "obsidian";
 
 // Remember to rename these classes and interfaces!
 
@@ -45,17 +45,14 @@ export default class ModeManager extends Plugin {
 
     async run(file: TFile | null) {
         if (file == null) {
-            console.log("file is null");
             return;
         }
         const metadata = this.app.metadataCache.getFileCache(file);
         if (!metadata) {
-            console.log("file has no metadata");
             return;
         }
         const { frontmatter } = metadata;
         if (!frontmatter) {
-            console.log("file has no frontmatter");
             return;
         }
         const mode: unknown = frontmatter[this.settings.property_name];
@@ -64,10 +61,8 @@ export default class ModeManager extends Plugin {
             return;
         }
         if (mode == null) {
-            console.log("frontmatter mode is null");
             return;
         }
-        console.log("setting mode");
         await this.setMode(mode);
     }
 
@@ -108,10 +103,8 @@ export default class ModeManager extends Plugin {
         });
 
         this.app.workspace.on("active-leaf-change", leaf => {
-            console.log("triggered");
             const view = leaf?.view;
             if (!isFileView(view)) {
-                console.log("not file view??");
                 return;
             }
             return this.run(view.file);
@@ -128,7 +121,6 @@ export default class ModeManager extends Plugin {
     async setMode(mode: ModeValue) {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (!view) {
-            console.log("no active MD view");
             return;
         }
         const state = view.getState();
@@ -149,7 +141,6 @@ export default class ModeManager extends Plugin {
                 state.source = false;
                 break;
         }
-        console.log("setting state: ", state);
         await view.setState(state, { history: true });
     }
 
