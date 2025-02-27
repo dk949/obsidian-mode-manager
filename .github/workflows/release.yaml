@@ -30,18 +30,17 @@ jobs:
         id: tag-message
         run: |
           TAG_NAME=${{ github.ref_name }}
-          TAG_MESSAGE=$(git tag -l --format='%(contents)' "$TAG_NAME")
-          # Escape special characters for JSON
-          TAG_MESSAGE="${TAG_MESSAGE//'%'/'%25'}"
-          TAG_MESSAGE="${TAG_MESSAGE//$'\n'/'%0A'}"
-          TAG_MESSAGE="${TAG_MESSAGE//$'\r'/'%0D'}"
-          echo "message=$TAG_MESSAGE" >> $GITHUB_OUTPUT
+          git tag -l $TAG_NAME --format="## %(contents:subject)
+
+          %(contents:body)" > body.md
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.TOKEN }}
-          body: ${{ steps.tag-message.outputs.message }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body_path: body.txt
           files: |
             main.js
             manifest.json
