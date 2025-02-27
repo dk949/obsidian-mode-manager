@@ -39,7 +39,7 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           body_path: body.md
           files: |
             main.js
