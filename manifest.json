@@ -1,0 +1,10 @@
+{
+	"id": "mode-manager",
+	"name": "Mode manager",
+	"version": "0.1.0",
+	"minAppVersion": "0.15.0",
+	"description": "Provide an easier way to manipulate reading/editing and preview/source mode",
+	"author": "dk949",
+	"authorUrl": "https://github.com/dk949",
+	"isDesktopOnly": false
+}
