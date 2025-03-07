@@ -55,7 +55,7 @@ export default class ModeManager extends Plugin {
         }
         const mode: unknown = frontmatter[this.settings.property_name];
         if (!isMaybeModeValue(mode)) {
-            new Notice(`The value of the ${this.settings.property_name} property  must be one of edit, preview, source or reading`);
+            new Notice(`The value of the ${this.settings.property_name} property must be one of edit, preview, source or reading`);
             return;
         }
         if (mode == null) {
@@ -69,16 +69,16 @@ export default class ModeManager extends Plugin {
 
         // This adds a simple command that can be triggered anywhere
         this.addCommand({
-            id: "switch-to-edit-preview",
-            name: "Switch to edit preview",
+            id: "switch-to-live-preview",
+            name: "Switch to live preview",
             callback: async () => {
                 await this.setMode("preview");
             }
         });
 
         this.addCommand({
-            id: "switch-to-edit-source",
-            name: "Switch to edit source",
+            id: "switch-to-source",
+            name: "Switch to source",
             callback: async () => {
                 await this.setMode("source");
             }
