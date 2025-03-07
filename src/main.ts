@@ -26,22 +26,13 @@ function isModeValue(v: any): v is ModeValue {
     }
 }
 
-
-function isItemView(v: View | null | undefined): v is ItemView {
-    return v != null && "contentEl" in v;
-}
-function isFileView(v: View | null | undefined): v is FileView {
-    return isItemView(v)
-        && "allowNoFile" in v
-        && "file" in v
-        && "navigation" in v;
-}
-
 export default class ModeManager extends Plugin {
     settings: ModeManagerSettings;
 
 
-    async run(file: TFile | null) {
+    async run(view: MarkdownView) {
+        const file = view.file;
+
         if (file == null) {
             return;
         }
@@ -61,7 +52,7 @@ export default class ModeManager extends Plugin {
         if (mode == null) {
             return;
         }
-        await this.setMode(mode);
+        await this.setMode(mode, view);
     }
 
     async onload() {
@@ -71,41 +62,32 @@ export default class ModeManager extends Plugin {
         this.addCommand({
             id: "switch-to-live-preview",
             name: "Switch to live preview",
-            callback: async () => {
-                await this.setMode("preview");
-            }
+            checkCallback: this.makeCheckCB(view => this.setMode("preview", view))
         });
 
         this.addCommand({
             id: "switch-to-source",
             name: "Switch to source",
-            callback: async () => {
-                await this.setMode("source");
-            }
+            checkCallback: this.makeCheckCB(view => this.setMode("source", view))
         });
 
         this.addCommand({
             id: "switch-to-edit",
             name: "Switch to edit",
-            callback: async () => {
-                await this.setMode("edit");
-            }
+            checkCallback: this.makeCheckCB(view => this.setMode("edit", view))
         });
 
         this.addCommand({
             id: "switch-to-reading",
             name: "Switch to reading",
-            callback: async () => {
-                await this.setMode("reading");
-            }
+            checkCallback: this.makeCheckCB(view => this.setMode("reading", view))
         });
 
         this.app.workspace.on("active-leaf-change", leaf => {
             const view = leaf?.view;
-            if (!isFileView(view)) {
-                return;
-            }
-            return this.run(view.file);
+            if (!view) return;
+            if (!(view instanceof MarkdownView)) return;
+            return this.run(view);
         });
 
         this.addSettingTab(new ModeManagerTab(this.app, this));
@@ -115,11 +97,7 @@ export default class ModeManager extends Plugin {
 
     }
 
-    async setMode(mode: ModeValue) {
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (!view) {
-            return;
-        }
+    async setMode(mode: ModeValue, view: MarkdownView) {
         const state = view.getState();
         switch (mode) {
             case "edit":
@@ -139,6 +117,24 @@ export default class ModeManager extends Plugin {
                 break;
         }
         await view.setState(state, { history: true });
+    }
+
+    getView() {
+        return this.app.workspace.getActiveViewOfType(MarkdownView);
+    }
+
+    makeCheckCB(cb: (view: MarkdownView) => any) {
+        return (checking: boolean) => {
+            const view = this.getView();
+            if (view) {
+                if (!checking) {
+                    cb(view);
+                }
+                return true;
+            }
+            return false;
+
+        };
     }
 
     async loadSettings() {
