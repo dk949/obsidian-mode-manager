@@ -1,6 +1,6 @@
 {
     "name": "mode-manager",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Provide an easier way to manipulate reading/editing and preview/source mode",
     "main": "main.js",
     "scripts": {
