@@ -1,7 +1,5 @@
 import { App, FileView, ItemView, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, TFile, View } from "obsidian";
 
-// Remember to rename these classes and interfaces!
-
 interface ModeManagerSettings {
     property_name: string
 }
@@ -110,7 +108,6 @@ export default class ModeManager extends Plugin {
             return this.run(view.file);
         });
 
-        // This adds a settings tab so the user can configure various aspects of the plugin
         this.addSettingTab(new ModeManagerTab(this.app, this));
     }
 
