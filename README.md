@@ -1,5 +1,4 @@
-# Obsidian mode manager
-
+# Mode manager
 
 This plugin adds dedicated commands to switch to specific modes (reading,
 editing source and editing preview), rather than relying on the default toggle
