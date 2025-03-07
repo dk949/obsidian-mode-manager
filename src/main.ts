@@ -83,12 +83,14 @@ export default class ModeManager extends Plugin {
             checkCallback: this.makeCheckCB(view => this.setMode("reading", view))
         });
 
-        this.app.workspace.on("active-leaf-change", leaf => {
-            const view = leaf?.view;
-            if (!view) return;
-            if (!(view instanceof MarkdownView)) return;
-            return this.run(view);
-        });
+        this.registerEvent(
+            this.app.workspace.on("active-leaf-change", leaf => {
+                const view = leaf?.view;
+                if (!view) return;
+                if (!(view instanceof MarkdownView)) return;
+                return this.run(view);
+            })
+        );
 
         this.addSettingTab(new ModeManagerTab(this.app, this));
     }
