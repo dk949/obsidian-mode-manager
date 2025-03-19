@@ -119,6 +119,7 @@ export default class ModeManager extends Plugin {
                 break;
         }
         await view.setState(state, { history: true });
+        this.app.workspace.trigger("layout-change");
     }
 
     getView() {
