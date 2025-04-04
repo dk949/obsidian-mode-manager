@@ -83,6 +83,13 @@ export default class ModeManager extends Plugin {
             checkCallback: this.makeCheckCB(view => this.setMode("reading", view))
         });
 
+        this.addCommand({
+            id: "switch-to-next-mode",
+            name: "Switch to next mode",
+            checkCallback: this.makeCheckCB(view => this.nextMode(view))
+        });
+
+
         this.registerEvent(
             this.app.workspace.on("active-leaf-change", leaf => {
                 const view = leaf?.view;
@@ -121,6 +128,35 @@ export default class ModeManager extends Plugin {
         await view.setState(state, { history: true });
         this.app.workspace.trigger("layout-change");
     }
+
+    async nextMode(view: MarkdownView) {
+        const state = view.getState();
+        let mode: ModeValue;
+        if (state.mode === "preview") {
+            mode = "reading";
+        } else {
+            // don't cycle into edit mode, only the sub-modes
+            if (state.source === true) {
+                mode = "source";
+            } else {
+                mode = "preview";
+            }
+        }
+
+        switch (mode) {
+            case "reading":
+                await this.setMode("source", view);
+                break;
+            case "source":
+                await this.setMode("preview", view);
+                break;
+            case "preview":
+                await this.setMode("reading", view);
+                break;
+        }
+    }
+
+
 
     getView() {
         return this.app.workspace.getActiveViewOfType(MarkdownView);
