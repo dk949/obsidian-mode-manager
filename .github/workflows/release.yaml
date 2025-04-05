@@ -30,9 +30,10 @@ jobs:
         id: tag-message
         run: |
           TAG_NAME=${{ github.ref_name }}
-          git tag -l $TAG_NAME --format="## %(contents:subject)
+          git tag -l "$TAG_NAME" --format="## %(contents:subject)
 
-          %(contents:body)" > body.md
+          %(contents:body)" > "${{ github.workspace }}/body.md"
+          cat "${{ github.workspace }}/body.md"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -40,7 +41,7 @@ jobs:
           token: ${{ secrets.TOKEN }}
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          body_path: body.md
+          body_path: ${{ github.workspace }}/body.md
           files: |
             main.js
             manifest.json
