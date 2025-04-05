@@ -131,28 +131,18 @@ export default class ModeManager extends Plugin {
 
     async nextMode(view: MarkdownView) {
         const state = view.getState();
-        let mode: ModeValue;
         if (state.mode === "preview") {
-            mode = "reading";
+            // from reading
+            await this.setMode("source", view);
         } else {
             // don't cycle into edit mode, only the sub-modes
             if (state.source === true) {
-                mode = "source";
-            } else {
-                mode = "preview";
-            }
-        }
-
-        switch (mode) {
-            case "reading":
-                await this.setMode("source", view);
-                break;
-            case "source":
+                // from source
                 await this.setMode("preview", view);
-                break;
-            case "preview":
+            } else {
+                // from preview
                 await this.setMode("reading", view);
-                break;
+            }
         }
     }
 
