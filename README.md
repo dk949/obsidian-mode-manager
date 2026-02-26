@@ -18,7 +18,20 @@ and live preview), rather than relying on the default toggle behaviour.
 
 
 You can use a special property (`default-mode` by default, can be changed in
-settings) to automatically switch to a specific mode when opening the file.
+settings) to automatically switch to a specific mode when opening the file. 
+Below is more about the available values. 
+
+### Available values
+
+The value of the special property must be one of:
+
+- `edit`
+- `preview`
+- `source`
+- `reading`
+
+Any other value will be ignored and a notice will be shown.
+
 
 > [!NOTE]
 > This is currently broken for daily notes opened on startup.
